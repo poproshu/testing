@@ -1,0 +1,16 @@
+version: "3"
+
+x-api-prod: &base-api-prod
+  build:
+    context: ../../api
+    dockerfile: ./docker/prod/Dockerfile
+  restart: always
+  networks:
+    - postgre_network
+    - nginx_network
+  env_file:
+    - ../../.env.prod
+
+services:
+  api:
+    <<: *base-api-prod

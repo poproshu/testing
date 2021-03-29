@@ -1,0 +1,38 @@
+version: "3"
+
+volumes:
+  postgre_data:
+
+networks:
+  postgre_network:
+    driver: bridge
+  nginx_network:
+    driver: bridge
+
+services:
+  api:
+    # container_name: api--${API_MODE}
+    extends:
+      file: ./x-docker-compose/api/${API_MODE}.yaml
+      service: api
+    depends_on:
+      - db
+
+  front:
+    container_name: front-${FRONT_MODE}
+    extends:
+      file: ./x-docker-compose/front/${FRONT_MODE}.yaml
+      service: front
+
+  db:
+    extends:
+      file: ./x-docker-compose/db.yaml
+      service: db
+
+  nginx:
+    extends:
+      file: ./x-docker-compose/nginx.yaml
+      service: nginx
+    depends_on:
+      - api
+      - front
