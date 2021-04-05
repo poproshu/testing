@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from staffuser.models import StaffUser
+from customuser.models import CustomUser
 
 # Create your models here.
 
@@ -111,7 +111,7 @@ class ItemDiscount(models.Model):
 
 class Product(models.Model):
     """Products"""
-    user = models.ForeignKey(StaffUser, on_delete=models.SET_NULL, null=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=255)
     image = models.ImageField(null=True, blank=True, upload_to='images/products')
     description = models.TextField(blank=True)

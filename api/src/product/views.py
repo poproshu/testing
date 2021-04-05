@@ -68,4 +68,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     # permission_classes = (IsAuthenticated,)
     serializer_class = serializers.ProductSerializer
     queryset = models.Product.objects.all()
+    filter_backends = [filters.SearchFilter]
+    filterset_fields = ['category', 'subcategory', 'brand', 'city']
+    search_fields = ['price', 'title']
 

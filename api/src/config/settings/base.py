@@ -32,9 +32,10 @@ INSTALLED_APPS = [
     "drf_yasg",
     "rest_framework",
     "rest_framework.authtoken",
+    'django_filters',
     "djoser",
     "request",
-    "staffuser",
+    "customuser",
     "product"
 ]
 
@@ -76,8 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-
-AUTH_USER_MODEL = "staffuser.StaffUser"
 
 
 # Database
