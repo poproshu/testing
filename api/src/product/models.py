@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from customuser.models import CustomUser
+from customuser.models import Client
 
 # Create your models here.
 
@@ -21,7 +21,7 @@ class Subcategory(models.Model):
     """Subcategories"""
     name = models.CharField(max_length=255, unique=True)
     image = models.ImageField(null=True, blank=True, upload_to='images/subcategories')
-    category = models.ForeignKey(Category, null=True, on_delete=models.CASCADE, related_name='subcategories')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='subcategories')
 
     class Meta:
         verbose_name_plural = "Subcategories"
@@ -111,22 +111,23 @@ class ItemDiscount(models.Model):
 
 class Product(models.Model):
     """Products"""
-    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
+    CHOICES = [(i,i) for i in range(1, 11)]
+    user = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=255)
     image = models.ImageField(null=True, blank=True, upload_to='images/products')
     description = models.TextField(blank=True)
-    price = models.IntegerField(blank=True, null=True)
+    price = models.PositiveIntegerField(default=0)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='products')
     subcategory = models.ForeignKey(Subcategory, on_delete=models.SET_NULL, null=True, related_name='products')
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, related_name='products')
-    discount = models.ManyToManyField(ItemDiscount, related_name='products')
-    condition = models.IntegerChoices('condition', '1 2 3 4 5 6 7 8 9 10')
-    purchase_price = models.IntegerField(blank=True, null=True)
-    pledge = models.IntegerField(blank=True, null=True)
+    discount = models.ManyToManyField(ItemDiscount, related_name='products', blank=True)
+    condition = models.IntegerField(choices=CHOICES)
+    purchase_price = models.PositiveIntegerField(blank=True, null=True)
+    pledge = models.PositiveIntegerField(default=0)
     city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, related_name='products')
-    inside_city = models.IntegerField(blank=True, null=True, verbose_name='price within the city')
-    outside_city = models.IntegerField(blank=True, null=True, verbose_name='price within the city')
-    delivery = models.IntegerField(blank=True, null=True, verbose_name='delivery price')
+    inside_city = models.PositiveIntegerField(default=0, verbose_name='price within the city')
+    outside_city = models.PositiveIntegerField(default=0, verbose_name='price within the city')
+    delivery = models.PositiveIntegerField(default=0, verbose_name='delivery price')
     pickup = models.CharField(max_length=800, blank=True, verbose_name='pickup address')
 
     def __str__(self):

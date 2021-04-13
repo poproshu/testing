@@ -19,6 +19,7 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path(f"api/", include("authclient.urls")),
     path(f"api/", include("product.urls")),
     re_path(
         r"^api/" + r"/swagger(?P<format>\.json|\.yaml)$",
