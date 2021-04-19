@@ -1,12 +1,14 @@
 from rest_framework import serializers, exceptions
 from django.db.models import Q
+from django.contrib.auth import password_validation
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from customuser.models import Client
 
+
 class LoginSerializer(serializers.Serializer):
     email_or_username = serializers.CharField(max_length=255, required=True)
-    password          = serializers.CharField(max_length=65, min_length=6, required=True)
+    password = serializers.CharField(max_length=65, min_length=6, required=True)
 
     def get_token(self, user):
         refresh = RefreshToken.for_user(user)
@@ -24,7 +26,7 @@ class LoginSerializer(serializers.Serializer):
     
 # SERIALIZER -  СЕРИАЛАЙЗЕР РЕГИСТРАЦИИ НОВОГО ПОЛЬЗОВАТЕЛЯ
 class RegistrationSerializer(serializers.ModelSerializer):
-    password2 = serializers.CharField(write_only=True, required=True)
+    password2 = serializers.CharField(write_only=True, required=True,)
 
     class Meta:
         model = Client
@@ -39,6 +41,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError({"passwordError": "Password fields didn't match."})
         return attrs
+    
+    def validate_password(self, value):
+        password_validation.validate_password(value, self.instance)
+        return value
     
     def create(self, validated_data):
         user = Client.objects.create(
