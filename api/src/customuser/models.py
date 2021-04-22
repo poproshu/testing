@@ -130,3 +130,82 @@ class Client(User, PermissionsMixin):
         return self.username
 
 
+class UserMode(models.Model):
+    # Устанавливаем варианты режимов для пользователя
+    MODE = [('0', 'Get'),('1', 'Give')]
+    mode = models.CharField(max_length=10, choices=MODE)
+    # Устанавливаем связь между режимами и юзером
+    customuser = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        unique_together = ('mode', 'customuser')
+
+    def __str__(self):
+        return f'Mode: {self.mode}'
+
+
+class Comment(models.Model):
+    # Владелец комментария 
+    comment_owner = models.ForeignKey(
+        UserMode,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="comment_owner"
+    )
+    # Получатель комментария 
+    comment_reciever = models.ForeignKey(
+        UserMode,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="comment_reciever"
+    )
+    # Сообщение комментария 
+    comment_body = models.TextField(max_length=370)
+
+    def __str__(self):
+        return str(self.comment_reciever)
+
+
+class Rent(models.Model):
+
+    class StatusChoices(models.TextChoices):
+        rent_request = 'Rent Request'
+        approval_from_owner = 'Approval' #После одобрения открывается доступ к заполнению контракта и мы отслылаем письмо
+        contract_signed = 'Contract signed'  
+        money_reserved = 'Money reserved'
+        rent_started = 'Rent Started'
+        rent_finished = 'Rent Finished'
+        abort = 'Rent aborted'
+    # Владелец комментария 
+    owner = models.ForeignKey(
+        UserMode,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="rent_owner"
+    )
+    # Получатель комментария 
+    receiver = models.ForeignKey(
+        UserMode,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="rent_reciever"
+    )
+    # Сообщение комментария 
+    contract = models.FileField(upload_to='contracts/', null=True)
+    status = models.CharField(choices=StatusChoices.choices, default=StatusChoices.rent_request, max_length=255)
+
+    # class Meta:
+    #     constraints = [
+    #     models.CheckConstraint(
+    #         check=models.~Q(owner=models.F('receiver')),
+    #         name='receiver_and_owner_can_not_be_equal')
+    #     ]
+
+    def __str__(self):
+        return f'{self.owner}: {self.receiver}'
+
+
+    ######
