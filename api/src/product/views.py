@@ -2,8 +2,26 @@ from django.shortcuts import render
 from rest_framework import viewsets, filters, status, mixins, generics
 from product import serializers
 from product import models
-# from rest_framework_simplejwt.authentication import JWTAuthentication
+from customuser.models import UserMode
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
+
+
+class DeliveryViewSet(viewsets.ModelViewSet):
+    # authentication_classes = (JWTAuthentication,)
+    # permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.ProductImageSerializer
+    queryset = models.Delivery.objects.all()
+
+
+class ProductImageViewSet(viewsets.ModelViewSet):
+    authentication_classes = (JWTAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.ProductImageSerializer
+
+    def get_queryset(self):
+        user = UserMode.objects.get(client=self.request.user.id, mode=1)
+        return models.ProductImage.objects.filter(owner=user)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -20,6 +38,8 @@ class SubcategoryViewSet(viewsets.ModelViewSet):
     # permission_classes = (IsAuthenticated,)
     serializer_class = serializers.SubcategorySerializer
     queryset = models.Subcategory.objects.all()
+    filterset_fields = ['category']
+
 
 
 class BrandViewSet(viewsets.ModelViewSet):

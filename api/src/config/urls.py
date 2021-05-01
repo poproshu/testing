@@ -4,6 +4,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 from djoser import views as djoser_views
+from django.conf.urls.static import static
 from django.conf import settings
 
 schema_view = get_schema_view(
@@ -21,6 +22,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path(f"api/", include("authclient.urls")),
     path(f"api/", include("product.urls")),
+    path("api/o/", include('oauth2_provider.urls', namespace='oauth2_provider')),
     re_path(
         r"^api/" + r"/swagger(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),
@@ -33,3 +35,6 @@ urlpatterns = [
     ),
     path(f"api/admin/", admin.site.urls),
 ] 
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

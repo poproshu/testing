@@ -1,6 +1,32 @@
 from rest_framework import serializers
 from product import models
+from customuser.models import UserMode
 
+
+class DeliverySerializer(serializers.ModelSerializer):
+    """Delivery serializer"""
+
+    class Meta:
+        model = models.Discount
+        fields = '__all__'
+
+
+class ProductImageSerializer(serializers.ModelSerializer):
+    """ProductImage serializer"""
+    
+    class Meta:
+        model = models.ProductImage
+        fields = '__all__'
+        read_only_fields = ['owner']
+    
+    def create(self, validated_data):
+        user = UserMode.objects.get(client__id=self.context['request'].user.id, mode=1)
+        product_image = models.ProductImage.objects.create(
+            image=validated_data['image'],
+            owner=user
+        )
+        return product_image
+        
 
 class CategorySerializer(serializers.ModelSerializer):
     """Category serializer"""

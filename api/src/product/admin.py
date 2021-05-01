@@ -12,4 +12,5 @@ admin.site.register(models.Brand)
 admin.site.register(models.Subcategory)
 admin.site.register(models.ItemDiscount)
 admin.site.register(models.Discount)
-
+admin.site.register(models.Delivery)
+admin.site.register(models.ProductImage)

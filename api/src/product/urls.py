@@ -12,6 +12,8 @@ router.register('cities', views.CityViewSet)
 router.register('days', views.DaysViewSet)
 router.register('discounts', views.DiscountViewSet)
 router.register('itemsdicount', views.ItemDiscountViewSet)
+router.register('product-images', views.ProductImageViewSet, basename='product-images')
+router.register('delivery', views.DeliveryViewSet)
 
 
 urlpatterns = [

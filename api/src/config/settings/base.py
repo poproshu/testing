@@ -36,9 +36,11 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     'django_filters',
     "djoser",
-    "customuser",
+    'oauth2_provider',
+    "customuser.apps.CustomUserConfig",
     "product",
-    'authclient'
+    'authclient',
+    'rent'
 ]
 
 MIDDLEWARE = [
@@ -53,10 +55,16 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "config.urls"
 
+OAUTH2_PROVIDER = {
+    # this is the list of available scopes
+    'SCOPES': {'read': 'Read scope', 'write': 'Write scope', 'groups': 'Access to your groups'}
+}
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
     ),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
@@ -125,6 +133,9 @@ USE_TZ = True
 
 STATIC_URL = f"/api/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
+MEDIA_URL = '/api/images/'
 
 AUTH_USER_MODEL = 'customuser.User'
 
