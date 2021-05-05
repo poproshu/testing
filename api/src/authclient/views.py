@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import GenericAPIView, CreateAPIView
 from customuser.models import Client
-from authclient.serializers import RegistrationSerializer, LoginSerializer
+from authclient.serializers import RegistrationSerializer, LoginSerializer, LoginTwoFactorSerializer
 
 
 # VIEW - АВТОРИЗАЦИЯ ПОЛЬЗОВАТЕЛЯ
@@ -14,6 +14,14 @@ class LoginAPIView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         return Response(data=serializer.validated_data, status=status.HTTP_200_OK)
 # /////////////////////////////////        
+
+class TwoFactorLogin(GenericAPIView):
+    serializer_class = LoginTwoFactorSerializer
+
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(data=serializer.validated_data, status=status.HTTP_200_OK)
 
     
 # VIEW - РЕГИСТРАЦИЯ НОВОГО ПОЛЬЗОВАТЕЛЯ

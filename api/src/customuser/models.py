@@ -121,6 +121,7 @@ class Client(User, PermissionsMixin):
     tg_notification = models.BooleanField(default=False)
     phone_notification = models.BooleanField(default=False)
     ws_notification = models.BooleanField(default=False)
+    two_factor_auth = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -146,26 +147,3 @@ class UserMode(models.Model):
 
     def __str__(self):
         return f'User:{self.client}, Mode: {self.mode}'
-
-
-class Comment(models.Model):
-    # Владелец комментария 
-    comment_owner = models.ForeignKey(
-        UserMode,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="comment_owner"
-    )
-    # Получатель комментария 
-    comment_reciever = models.ForeignKey(
-        UserMode,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="comment_reciever"
-    )
-    # Сообщение комментария 
-    comment_body = models.TextField(max_length=370)
-
-    def __str__(self):
-        return str(self.comment_reciever)
-        
