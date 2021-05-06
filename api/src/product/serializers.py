@@ -3,6 +3,23 @@ from product import models
 from customuser.models import UserMode
 
 
+class FavoriteSerializer(serializers.ModelSerializer):
+    """Favorites serializer"""
+    class Meta:
+        model = models.Favorite
+        fields = '__all__'
+        read_only_fields = ['user']
+    
+    def create(self, validated_data):
+        user = UserMode.objects.get(client__id=self.context['request'].user.id, mode=0)
+        favorite = models.Favorite.objects.create(
+            product=validated_data['product'],
+            user=user
+        )
+        return favorite
+
+
+
 class DeliverySerializer(serializers.ModelSerializer):
     """Delivery serializer"""
 

@@ -7,6 +7,15 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 
+class FavoriteViewSet(viewsets.ModelViewSet):
+    authentication_classes = (JWTAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.FavoriteSerializer
+    
+    def get_queryset(self):
+        return models.Favorite.objects.filter(user__client__id=self.request.user.id)
+
+
 class DeliveryViewSet(viewsets.ModelViewSet):
     # authentication_classes = (JWTAuthentication,)
     # permission_classes = (IsAuthenticated,)

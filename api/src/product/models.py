@@ -126,7 +126,15 @@ class Product(models.Model):
         return self.title
     
 
+class Favorite(models.Model):
+    user = models.ForeignKey(UserMode,
+        on_delete=models.CASCADE,
+        related_name="favorites",
+        limit_choices_to={'mode': '0'})
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.product.name}'
 
 
 

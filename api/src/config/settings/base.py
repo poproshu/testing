@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     "customuser.apps.CustomUserConfig",
     "product",
     'authclient',
-    'rent'
+    'rent',
+    'mail'
 ]
 
 MIDDLEWARE = [
@@ -177,3 +178,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'djangoemailsend@gmail.com'
 EMAIL_HOST_PASSWORD = 'k2869804p'
+
+#SERVICE EMAIL
+SERVICE_EMAIL = os.environ.get("SERVICE_EMAIL")
