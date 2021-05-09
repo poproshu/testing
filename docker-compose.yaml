@@ -36,3 +36,15 @@ services:
     depends_on:
       - api
       - front
+  
+  redis:
+    image: redis:alpine
+    
+  celery:
+    extends:
+      file: ./x-docker-compose/celery.yaml
+      service: celery
+    depends_on:
+      - db
+      - redis
+      - api

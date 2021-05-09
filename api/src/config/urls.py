@@ -21,7 +21,9 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path(f"api/", include("authclient.urls")),
+    path(f"api/", include("subscription.urls")),
     path(f"api/", include("mail.urls")),
+    path(f"api/", include("customuser.urls")),
     path(f"api/", include("product.urls")),
     path("api/o/", include('oauth2_provider.urls', namespace='oauth2_provider')),
     re_path(

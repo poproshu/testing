@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     "product",
     'authclient',
     'rent',
-    'mail'
+    'mail',
+    'subscription'
 ]
 
 MIDDLEWARE = [
@@ -181,3 +182,7 @@ EMAIL_HOST_PASSWORD = 'k2869804p'
 
 #SERVICE EMAIL
 SERVICE_EMAIL = os.environ.get("SERVICE_EMAIL")
+
+
+CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"

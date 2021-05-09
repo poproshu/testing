@@ -108,20 +108,24 @@ class Address(models.Model):
 
 
 class Client(User, PermissionsMixin):
+    class SexChoices(models.TextChoices):
+        male = 'Male'
+        Female = 'Female'
     address = models.ManyToManyField(Address, blank=True, related_name='user')
     username = models.CharField(max_length=100, unique=True)
     phone = models.CharField(max_length=11, blank=True)
     avatar = models.ImageField(upload_to='images/avatar/', blank=True, null=True)
     # favorite = 
     # passport
+    sex = models.CharField(max_length=20, choices=SexChoices.choices)
     birth_date = models.DateField(blank=True, null=True)
     user_city = models.ForeignKey(City, blank=True, null=True, on_delete=models.SET_NULL)
-    is_subscribed = models.BooleanField(default=False)
     email_notification = models.BooleanField(default=False)
     tg_notification = models.BooleanField(default=False)
     phone_notification = models.BooleanField(default=False)
     ws_notification = models.BooleanField(default=False)
     two_factor_auth = models.BooleanField(default=False)
+    
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []

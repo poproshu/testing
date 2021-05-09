@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  celery:
+    restart: always
+    build:
+      context: ../api
+      dockerfile: ./docker/dev/Dockerfile
+    command: >
+      sh -c "cd src && celery -A config worker -l info"
+    volumes:
+      - ../api:/api
+    env_file:
+      - ../.env.dev

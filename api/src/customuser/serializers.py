@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth import password_validation
-from customuser.models import Client
+from customuser.models import Client, UserMode
+from subscription.serializers import SubscriptionSerializer
 
 
 class PasswordChangeSerializer(serializers.ModelSerializer):
@@ -29,9 +30,17 @@ class PasswordChangeSerializer(serializers.ModelSerializer):
         return instance
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Client
         exclude = ['password']
 
+
+class ProfileSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.ReadOnlyField(source='subscription.is_subscribed')
+    client = ClientSerializer(read_only=True)
+
+    class Meta:
+        model = UserMode
+        fields = '__all__'
