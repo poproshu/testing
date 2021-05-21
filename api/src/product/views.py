@@ -1,10 +1,33 @@
+from re import S
 from django.shortcuts import render
-from rest_framework import viewsets, filters, status, mixins, generics
+from rest_framework import request, viewsets, filters, status, mixins, generics, views
 from product import serializers
 from product import models
 from customuser.models import UserMode
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+
+class ProductPromoteServicePriceAPIView(views.APIView):
+    authentication_classes = (JWTAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        object = models.ProductPromoteServicePrice.objects.last()
+        serializer = serializers.ProductPromeServicePriceSerializer(instance=object)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ProductPromoteContractViewSet(viewsets.ModelViewSet):
+    authentication_classes = (JWTAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.ProductPromoteContractSerialzier
+
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return models.ProductPromoteContract.objects.all()
+        return models.ProductPromoteContract.objects.filter(product__user__client__id=self.request.user.id)
 
 
 class FavoriteViewSet(viewsets.ModelViewSet):

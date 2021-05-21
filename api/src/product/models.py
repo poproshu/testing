@@ -1,5 +1,9 @@
 from django.db import models
 from django.conf import settings
+from datetime import timedelta
+from django.utils.timezone import now
+from django.core.exceptions import ValidationError
+from django.db.models.fields.related import ForeignKey
 from customuser.models import UserMode
 
 # Create your models here.
@@ -137,7 +141,47 @@ class Favorite(models.Model):
         return f'{self.product.name}'
 
 
+class ProductPromoteContract(models.Model):
+    CHOICES = [(i,i) for i in range(1, 8)]
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_promote_contract')
+    service = models.ForeignKey('ProductPromoteServicePrice', on_delete=models.CASCADE, related_name='product_promote_contract')
+    period = models.IntegerField(choices=CHOICES)
+    created_at = models.DateTimeField(editable=False)
+    expired_date = models.DateTimeField(editable=False)
+    total_price = models.PositiveIntegerField(editable=False)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created_at = now()
+            self.expired_date = self.created_at + timedelta(days=self.period)
+            self.total_price = self.service.price_with_sale * self.period
+        super(ProductPromoteContract, self).save(*args, **kwargs)
+    
+    def __str__(self):
+        return f'{self.product.title}: {self.expired_date}'
+        
+
+class ProductPromoteService(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    image = models.ImageField(upload_to='promote_services/')
+    max_places = models.IntegerField()
+
+    @property
+    def places_left(self):
+        reserved_places = ProductPromoteContract.objects.filter(expired_at__gte=now()).count()
+        return self.max_places - reserved_places
 
 
+class ProductPromoteServicePrice(models.Model):
+    product_promote_service = models.ForeignKey(ProductPromoteService, on_delete=models.CASCADE)
+    price = models.PositiveIntegerField()
+    price_with_sale = models.PositiveIntegerField(null=True, blank=True)
 
-
+    def save(self, *args, **kwargs):
+        if not self.price_with_sale:
+            self.price_with_sale = self.price
+        super(ProductPromoteServicePrice, self).save(*args, **kwargs)
+    
+    def __str__(self):
+        return f'{self.product_promote_service}: {self.price_with_sale}'

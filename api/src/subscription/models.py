@@ -27,9 +27,9 @@ class Subscription(models.Model):
             return 30
 
     def save(self, *args, **kwargs):
-        self.subscribed_at = now().date()
-        duration = self.duration()
-        self.expires_at = self.subscribed_at + timedelta(days=duration)
+        if not self.id:
+            self.subscribed_at = now().date()
+            self.expires_at = self.subscribed_at + timedelta(days=self.duration())
         super(Subscription, self).save(*args, **kwargs)
 
     def __str__(self):

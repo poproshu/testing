@@ -1,6 +1,41 @@
+from rest_framework.exceptions import ValidationError
+from django.utils.timezone import now
+from django.db.models import fields
+from django.db.models.lookups import LessThanOrEqual
 from rest_framework import serializers
 from product import models
 from customuser.models import UserMode
+
+
+class ProductPromoteServiceSerializer(serializers.ModelSerializer):
+    places_left = serializers.ModelSerializer()
+
+    class Meta:
+        model = models.ProductPromoteService
+        fields = '__all__'
+
+
+class ProductPromeServicePriceSerializer(serializers.ModelSerializer):
+    product_promote_service  = ProductPromoteServiceSerializer(read_only=True)
+
+    class Meta:
+        model = models.ProductPromoteServicePrice
+        fields = '__all__'
+
+
+class ProductPromoteContractSerialzier(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.ProductPromoteService
+        fields = '__all__'
+    
+    def validate(self, attrs):
+        product = attrs['product']
+        if models.ProductPromoteService.objects.last().places_left <= 0:
+            raise ValidationError({'places': '0 places left'})
+        if models.ProductPromoteContract.objects.filter(expired_date__gte=now(), product=product).exists():
+            raise ValidationError({'product': 'You are already promoting this product'})
+        return attrs
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
@@ -17,7 +52,6 @@ class FavoriteSerializer(serializers.ModelSerializer):
             user=user
         )
         return favorite
-
 
 
 class DeliverySerializer(serializers.ModelSerializer):
