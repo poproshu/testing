@@ -149,6 +149,7 @@ class ProductPromoteContract(models.Model):
     created_at = models.DateTimeField(editable=False)
     expired_date = models.DateTimeField(editable=False)
     total_price = models.PositiveIntegerField(editable=False)
+#     status ChooseField
 
     def save(self, *args, **kwargs):
         if not self.id:
